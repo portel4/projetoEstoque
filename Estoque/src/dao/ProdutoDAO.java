@@ -5,20 +5,91 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import connection.ConnectionFactory;
 import model.Produto;
 import util.CSV;
 
 // DAO - Data Access Object
-public class ProdutoDAO {
+public class ProdutoDAO implements DAO<Produto> {
 	
-	private final String arquivo = "C:/Users/Deliziane/Documents/workspace/GitHub/projeto_estoque/Estoque/db/Produto.CSV";
+	private final String ARQUIVO = "C:/Users/Deliziane/Documents/Estudos/Java_curso/GitHub/projetoEstoque/Estoque/bd/Produto.CSV";
+	
+	@Override
+	public List<Produto> select() {
+		List<Produto> lista = new ArrayList<>();
+		Connection con = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		String sql = "SELECT * FROM Produto";
+		con = ConnectionFactory.getConnection();
+		try {
+			pst = con.prepareStatement(sql);
+			rs = pst.executeQuery();
+			while (rs.next()) {
+				int codigo = rs.getInt("Codigo");
+				String nome = rs.getString("Nome");
+				int qtde = rs.getInt("Qtde");
+				double valor = rs.getDouble("Valor");
+				lista.add(new Produto(codigo,nome,qtde,valor));
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			ConnectionFactory.closeConnection(con,pst,rs);
+		}		
+		return lista;
+	}
+
+	@Override
+	public int insert(Produto r) {
+		Connection con = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		String sql = "INSERT INTO Produto " +
+					 "(Nome,Qtde,Valor) " +
+					 "VALUES (?,?,?)";
+		int codigo = 0;
+		con = ConnectionFactory.getConnection();		
+		try {
+			pst = con.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
+			pst.setString(1,r.getNome());
+			pst.setInt(2,r.getQtde());
+			pst.setDouble(3,r.getValor());
+			pst.executeUpdate();
+			rs = pst.getGeneratedKeys();
+			if (rs.next()) {
+				codigo = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			ConnectionFactory.closeConnection(con,pst,rs);
+		}
+		return codigo;
+	}
+
+	@Override
+	public boolean update(Produto r) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean delete(int id) {
+		// TODO Auto-generated method stub
+		return false;
+	}		
 	
 	public void exportaCSV(List<Produto> lista) {
 		try {
-			BufferedWriter dados = new BufferedWriter(new FileWriter(arquivo));
+			BufferedWriter dados = new BufferedWriter(new FileWriter(ARQUIVO));
 			for (Produto p: lista) {
 				CSV.write(dados, p.getCodigo());
 				CSV.write(dados, p.getNome());
@@ -34,7 +105,7 @@ public class ProdutoDAO {
 	public List<Produto> importaCSV() {
 		List<Produto> lista = new ArrayList<Produto>();
 		try {
-			BufferedReader dados = new BufferedReader(new FileReader(arquivo));
+			BufferedReader dados = new BufferedReader(new FileReader(ARQUIVO));
 			String linha;
 			while ((linha = dados.readLine()) != null) {
 				String[] s = linha.split(",");
@@ -50,6 +121,6 @@ public class ProdutoDAO {
 			System.out.println(e.getMessage());
 		}
 		return lista;
-	}	
-	
+	}
+
 }

@@ -2,6 +2,8 @@ package connection;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ConnectionFactory {
@@ -10,18 +12,16 @@ public class ConnectionFactory {
 
 	
 	public static Connection getConnection() {
-		Connection con= null;
-		
+		Connection con = null;
 		try {
+			//con = DriverManager.getConnection(URL, USER, PASS);
 			con = DriverManager.getConnection(URL);
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
-		
-		return con; 
-		
+		return con;
 	}
-	
+
 	public static void closeConnection(Connection con) {
 		try {
 			if (con != null) {
@@ -31,4 +31,27 @@ public class ConnectionFactory {
 			System.out.println(e.getMessage());
 		}
 	}
+
+	public static void closeConnection(Connection con, PreparedStatement pst) {
+		try {
+			if (pst != null) {
+				pst.close();
+			}
+			closeConnection(con);
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public static void closeConnection(Connection con, PreparedStatement pst, ResultSet rs){
+		try {
+			if (rs != null) {
+				rs.close();
+			}
+			closeConnection(con,pst);
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
 }
