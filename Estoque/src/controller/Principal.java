@@ -9,7 +9,7 @@ import dao.FornecedorDAO;
 import model.Entrada;
 import model.Fornecedor;
 import model.Produto;
-import view.TelaFornecedor;
+import view.TelaKardex;
 
 public class Principal {
 	
@@ -19,11 +19,13 @@ public class Principal {
 		//gravaProdutos();
 		//leProdutos();
 		//listaProdutos();
-		new TelaFornecedor().setVisible(true);
 		//testeFornecedor();	
 		//testeConexao();
 		//testaEntrada();
 		//new TelaPrincipal().setVisible(true);
+		//new TelaFornecedor().setVisible(true);
+		//new TelaProduto().setVisible(true);
+		new TelaKardex().setVisible(true);
 	}
 	
 	private static void testaEntrada() {

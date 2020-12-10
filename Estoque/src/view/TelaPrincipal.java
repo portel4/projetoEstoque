@@ -30,7 +30,7 @@ public class TelaPrincipal extends JFrame {
 	
 	private void initComponents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 600, 400);
+		setBounds(100, 100, 484, 483);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -71,24 +71,37 @@ public class TelaPrincipal extends JFrame {
 		sl_pnCentral.putConstraint(SpringLayout.WEST, lbCadastroDeProdutos, 52, SpringLayout.WEST, pnCentral);
 		pnCentral.add(lbCadastroDeProdutos);
 		
-		JButton btnFornecedor = new JButton("");
-		btnFornecedor.setContentAreaFilled(false);
-		btnFornecedor.setBorderPainted(false);
-		sl_pnCentral.putConstraint(SpringLayout.NORTH, btnFornecedor, 25, SpringLayout.NORTH, pnCentral);
-		sl_pnCentral.putConstraint(SpringLayout.WEST, btnFornecedor, 72, SpringLayout.EAST, btProduto);
-		sl_pnCentral.putConstraint(SpringLayout.SOUTH, btnFornecedor, 146, SpringLayout.NORTH, pnCentral);
-		btnFornecedor.setIcon(new ImageIcon(TelaPrincipal.class.getResource("/images/btFornecedor.png")));
-		btnFornecedor.addActionListener(new ActionListener() {
+		JButton btFornecedor = new JButton("");
+		btFornecedor.setContentAreaFilled(false);
+		btFornecedor.setBorderPainted(false);
+		sl_pnCentral.putConstraint(SpringLayout.NORTH, btFornecedor, 25, SpringLayout.NORTH, pnCentral);
+		sl_pnCentral.putConstraint(SpringLayout.WEST, btFornecedor, 72, SpringLayout.EAST, btProduto);
+		sl_pnCentral.putConstraint(SpringLayout.SOUTH, btFornecedor, 146, SpringLayout.NORTH, pnCentral);
+		btFornecedor.setIcon(new ImageIcon(TelaPrincipal.class.getResource("/images/btFornecedor.png")));
+		btFornecedor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				telaFornecedor();
 			}
 		});
-		pnCentral.add(btnFornecedor);
+		pnCentral.add(btFornecedor);
 		
 		JLabel lbCadastroDeFornecedores = new JLabel("Cadastro de Fornecedores");
 		sl_pnCentral.putConstraint(SpringLayout.NORTH, lbCadastroDeFornecedores, 0, SpringLayout.NORTH, lbCadastroDeProdutos);
 		sl_pnCentral.putConstraint(SpringLayout.WEST, lbCadastroDeFornecedores, 113, SpringLayout.EAST, lbCadastroDeProdutos);
 		pnCentral.add(lbCadastroDeFornecedores);
+		
+		JButton btKardex = new JButton("");
+		btKardex.setContentAreaFilled(false);
+		btKardex.setBorderPainted(false);
+		sl_pnCentral.putConstraint(SpringLayout.NORTH, btKardex, 62, SpringLayout.SOUTH, lbCadastroDeProdutos);
+		sl_pnCentral.putConstraint(SpringLayout.WEST, btKardex, 0, SpringLayout.WEST, btProduto);
+		btKardex.setIcon(new ImageIcon(TelaPrincipal.class.getResource("/images/btKardex.png")));
+		pnCentral.add(btKardex);
+		
+		JLabel lbMovimentaoDeEstoque = new JLabel("Movimenta\u00E7\u00E3o de Estoque");
+		sl_pnCentral.putConstraint(SpringLayout.NORTH, lbMovimentaoDeEstoque, 6, SpringLayout.SOUTH, btKardex);
+		sl_pnCentral.putConstraint(SpringLayout.EAST, lbMovimentaoDeEstoque, 0, SpringLayout.EAST, btProduto);
+		pnCentral.add(lbMovimentaoDeEstoque);
 	}
 	
 	private void telaProduto() {
@@ -98,5 +111,4 @@ public class TelaPrincipal extends JFrame {
 	private void telaFornecedor() {
 		new TelaFornecedor().setVisible(true);
 	}
-
 }

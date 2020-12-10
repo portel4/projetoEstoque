@@ -33,8 +33,20 @@ public class Fornecedor {
 		return ok;
 	}
 	
+	public static Fornecedor pesquisar(int id) {
+		Fornecedor r = new FornecedorDAO().select(id);
+		return r;
+	}
+	
 	public int gravar() {
-		return(new FornecedorDAO().insert(this));
+		int codigo = 0;
+		if (this.getCodigo() == 0) { // incluindo novo registro
+			codigo = new FornecedorDAO().insert(this);
+		} else { // alterando registro existente
+			new FornecedorDAO().update(this);
+			codigo = this.getCodigo();
+		}
+		return codigo;
 	}
 
 // Não pode existir na versão final do sistema

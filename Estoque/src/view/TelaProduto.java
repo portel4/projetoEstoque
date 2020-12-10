@@ -11,12 +11,14 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import model.Fornecedor;
 import model.Produto;
 import util.Conversao;
 
@@ -103,9 +105,20 @@ public class TelaProduto extends JFrame {
 		tfValor.setBounds(122, 144, 124, 20);
 		pnCadastro.add(tfValor);
 		
+		JPanel pnTabela = new JPanel();
+		tpProduto.addTab("Tabela", null, pnTabela, null);
+		pnTabela.setLayout(new BorderLayout(0, 0));
+		
+		JScrollPane scrollPane = new JScrollPane();
+		pnTabela.add(scrollPane, BorderLayout.CENTER);
+		
+		tabela = new JTable();
+		atualizaTabela();
+		tabela.setAutoCreateRowSorter(true);
+		scrollPane.setViewportView(tabela);
+		
 		JPanel pnRodape = new JPanel();
-		pnRodape.setBounds(0, 216, 585, 37);
-		pnCadastro.add(pnRodape);
+		contentPane.add(pnRodape, BorderLayout.SOUTH);
 		pnRodape.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		pnRodape.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
@@ -133,19 +146,15 @@ public class TelaProduto extends JFrame {
 			}
 		});
 		
+		JButton btnExcluir = new JButton("Excluir");
+		btnExcluir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				excluiProduto();
+			}
+		});
+		pnRodape.add(btnExcluir);
+		
 		pnRodape.add(btGravar);
-		
-		JPanel pnTabela = new JPanel();
-		tpProduto.addTab("Tabela", null, pnTabela, null);
-		pnTabela.setLayout(new BorderLayout(0, 0));
-		
-		JScrollPane scrollPane = new JScrollPane();
-		pnTabela.add(scrollPane, BorderLayout.CENTER);
-		
-		tabela = new JTable();
-		tabela.setModel(Produto.getTableModel());
-		tabela.setAutoCreateRowSorter(true);
-		scrollPane.setViewportView(tabela);
 	}
 	
 	private void gravaProduto() {
@@ -155,6 +164,7 @@ public class TelaProduto extends JFrame {
 		double valor = Double.parseDouble(tfValor.getText());
 		new Produto(codigo,nome,qtde,valor).gravar();
 		limpaTela();
+		atualizaTabela();
 	}
 	
 	private void limpaTela() {
@@ -168,4 +178,22 @@ public class TelaProduto extends JFrame {
 	private void listaProdutos() {
 		Produto.getLista().forEach(e -> System.out.println(e));		
 	}
+	
+	private void excluiProduto() {
+		int linha = tabela.getSelectedRow();
+		String codigo = tabela.getModel().getValueAt(linha,0).toString();
+		String nome = tabela.getModel().getValueAt(linha,1).toString();
+		int id = Integer.parseInt(codigo);
+		boolean ok = Produto.excluir(id);
+		atualizaTabela();
+		if (ok) {
+			JOptionPane.showMessageDialog(null, 
+					"Produto [" + nome + "] excluído com sucesso!");
+		}
+	}
+
+	private void atualizaTabela() {
+		tabela.setModel(Produto.getTableModel());		
+	}
+	
 }

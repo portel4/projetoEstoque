@@ -75,6 +75,33 @@ public class FornecedorDAO implements DAO<Fornecedor> {
 		return lista;
 	}
 
+	public Fornecedor select(int id) {
+		Fornecedor reg = null;
+		Connection con = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		String sql = "SELECT Codigo,Nome,CNPJ,Telefone " +
+					 "FROM Fornecedor WHERE Codigo = ?";
+		con = ConnectionFactory.getConnection();
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setInt(1,id);
+			rs = pst.executeQuery();
+			if (rs.next()) {
+				int codigo = rs.getInt("Codigo");
+				String nome = rs.getString("Nome");
+				String cnpj = rs.getString("CNPJ");
+				String telefone = rs.getString("Telefone");
+				reg = new Fornecedor(codigo, nome, cnpj, telefone);
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			ConnectionFactory.closeConnection(con,pst,rs);
+		}		
+		return reg;
+	}
+	
 	public void exportaCSV(List<Fornecedor> lista) {
 		try {
 			BufferedWriter dados = new BufferedWriter(new FileWriter(arquivo));
@@ -115,8 +142,30 @@ public class FornecedorDAO implements DAO<Fornecedor> {
 
 	@Override
 	public boolean update(Fornecedor r) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean ok = false;
+		Connection con = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		String sql = "UPDATE Fornecedor SET " +
+					 "Nome = ?, " +
+					 "CNPJ = ?, " +
+					 "Telefone = ? " +
+					 "WHERE Codigo = ?";
+		con = ConnectionFactory.getConnection();		
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setString(1,r.getNome());
+			pst.setString(2,r.getCnpj());
+			pst.setString(3,r.getTelefone());
+			pst.setInt(4,r.getCodigo());
+			pst.executeUpdate();
+			ok = true;
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			ConnectionFactory.closeConnection(con,pst,rs);
+		}
+		return ok;
 	}
 
 	@Override

@@ -36,6 +36,7 @@ public class TelaFornecedor extends JFrame {
 	private JTextField tfNome;
 	private JTable tabela;
 	private JButton btListar;
+	private JTabbedPane tpFornecedor;
 
 	/**
 	 * Create the frame.
@@ -46,7 +47,7 @@ public class TelaFornecedor extends JFrame {
 		setTitle("Sistema de Controle de Estoque");
 		setLocationRelativeTo(null);  // centralizado
 		// fecha somente a tela e não o sistema
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
 	}
 	
 	private void initComponents() {
@@ -66,7 +67,7 @@ public class TelaFornecedor extends JFrame {
 		lbTitulo.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		pnTitulo.add(lbTitulo);
 		
-		JTabbedPane tpFornecedor = new JTabbedPane(JTabbedPane.TOP);
+		tpFornecedor = new JTabbedPane(JTabbedPane.TOP);
 		contentPane.add(tpFornecedor, BorderLayout.CENTER);
 		
 		JPanel pnCadastro = new JPanel();
@@ -165,8 +166,44 @@ public class TelaFornecedor extends JFrame {
 				excluiFornecedor();
 			}
 		});
+		
+		JButton btAlterar = new JButton("Alterar");
+		btAlterar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				alteraFornecedor();
+			}
+		});
+		pnRodape.add(btAlterar);
 		pnRodape.add(btExcluir);
 		pnRodape.add(btGravar);
+	}
+	
+	private void alteraFornecedor() {
+		int linha = tabela.getSelectedRow();
+		String codigo = tabela.getModel().getValueAt(linha,0).toString();
+		String nome = tabela.getModel().getValueAt(linha,1).toString();
+		int id = Integer.parseInt(codigo);
+		// pegar os dados do banco de dados
+		Fornecedor f = Fornecedor.pesquisar(id);
+		// se não encontrar exibe mensagem
+		if (f == null) {
+			JOptionPane.showMessageDialog(null, 
+					"Fornecedor não encontrado!");			
+		} else {
+			// se encontrou mostra dados
+			tfCodigo.setText(String.valueOf(f.getCodigo()));
+			tfNome.setText(f.getNome());
+			tfCNPJ.setText(f.getCnpj());
+			tfTelefone.setText(f.getTelefone());
+			tpFornecedor.setSelectedIndex(0);
+			tfNome.requestFocus();
+		}
+		// atualiza a tabela
+		atualizaTabela();
+//		if (ok) {
+//			JOptionPane.showMessageDialog(null, 
+//					"Fornecedor [" + nome + "] alterado com sucesso!");
+//		}
 	}
 	
 	private void excluiFornecedor() {
@@ -199,26 +236,36 @@ public class TelaFornecedor extends JFrame {
 		String nome = tfNome.getText();
 		String cnpj = tfCNPJ.getText();
 		String telefone = tfTelefone.getText();
-		int key = new Fornecedor(nome,cnpj,telefone).gravar();
+		if (codigo == 0) { // inclusão de novo registro
+			int key = new Fornecedor(nome,cnpj,telefone).gravar();
+			JOptionPane.showMessageDialog(null, 
+					"Código do Fornecedor: " + key);
+		} else { // alteração de registro já existente
+			new Fornecedor(codigo,nome,cnpj,telefone).gravar();
+		}
 		atualizaTabela();
-		JOptionPane.showMessageDialog(null, 
-				"Código do Fornecedor: " + key);
 		limpaTela();
 	}
 	
 	private void atualizaTabela() {
-		tabela.setModel(Fornecedor.getTableModel());		
+		tabela.setModel(Fornecedor.getTableModel());
+		configuraTabela();
 	}
 	
 	private void configuraTabela() {
+		// configura o cellRenderer do cabeçalho
+		DefaultTableCellRenderer hcr = new DefaultTableCellRenderer();
+		hcr.setHorizontalAlignment(SwingConstants.CENTER);
+		hcr.setBackground(Color.gray);
+		hcr.setForeground(Color.white);
+		tabela.getTableHeader().setDefaultRenderer(hcr);
+		// configura cellRenderer das colunas
 		DefaultTableCellRenderer central = new DefaultTableCellRenderer();
 		central.setHorizontalAlignment(SwingConstants.CENTER);
-		tabela.getTableHeader().setDefaultRenderer(central);
-		tabela.getTableHeader().setOpaque(false);
-		tabela.getTableHeader().setBackground(Color.blue);
 		tabela.getColumnModel().getColumn(0).setCellRenderer(central);
 		tabela.getColumnModel().getColumn(2).setCellRenderer(central);
 		tabela.getColumnModel().getColumn(3).setCellRenderer(central);
+		// configura larguda das colunas Código e Nome
 		tabela.getColumnModel().getColumn(0).setMaxWidth(50);
 		tabela.getColumnModel().getColumn(1).setMinWidth(200);
 	}

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.table.DefaultTableModel;
 
+import dao.FornecedorDAO;
 import dao.ProdutoDAO;
 
 public class Produto {
@@ -22,6 +23,11 @@ public class Produto {
 	public int gravar() {
 		int codigo = new ProdutoDAO().insert(this);
 		return codigo;
+	}
+	
+	public static boolean excluir(int id) {
+		boolean ok = new ProdutoDAO().delete(id);
+		return ok;
 	}
 	
 	public static void gravarCSV() {

@@ -47,6 +47,33 @@ public class ProdutoDAO implements DAO<Produto> {
 		return lista;
 	}
 
+	public Produto select(int id) {
+		Produto reg = null;
+		Connection con = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		String sql = "SELECT * FROM Produto " +
+					 "WHERE Codigo = ?";
+		con = ConnectionFactory.getConnection();
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setInt(1, id);
+			rs = pst.executeQuery();
+			if (rs.next()) {
+				int codigo = rs.getInt("Codigo");
+				String nome = rs.getString("Nome");
+				int qtde = rs.getInt("Qtde");
+				double valor = rs.getDouble("Valor");
+				reg = new Produto(codigo,nome,qtde,valor);
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			ConnectionFactory.closeConnection(con,pst,rs);
+		}		
+		return reg;
+	}
+	
 	@Override
 	public int insert(Produto r) {
 		Connection con = null;
@@ -83,8 +110,23 @@ public class ProdutoDAO implements DAO<Produto> {
 
 	@Override
 	public boolean delete(int id) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean ok = false;
+		Connection con = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		String sql = "DELETE FROM Produto WHERE Codigo = ?";
+		con = ConnectionFactory.getConnection();
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setInt(1,id);
+			pst.execute();
+			ok = true;
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			ConnectionFactory.closeConnection(con,pst,rs);
+		}		
+		return ok;
 	}		
 	
 	public void exportaCSV(List<Produto> lista) {
