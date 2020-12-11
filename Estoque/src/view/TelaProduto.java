@@ -35,6 +35,7 @@ public class TelaProduto extends JFrame {
 	private JTextField tfQtde;
 	private JTextField tfValor;
 	private JTable tabela;
+	private JTabbedPane tpProduto;
 
 	/**
 	 * Create the frame.
@@ -60,7 +61,7 @@ public class TelaProduto extends JFrame {
 		lbTitulo.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		pnTitulo.add(lbTitulo);
 		
-		JTabbedPane tpProduto = new JTabbedPane(JTabbedPane.TOP);
+		tpProduto = new JTabbedPane(JTabbedPane.TOP);
 		contentPane.add(tpProduto, BorderLayout.CENTER);
 		
 		JPanel pnCadastro = new JPanel();
@@ -146,16 +147,40 @@ public class TelaProduto extends JFrame {
 			}
 		});
 		
-		JButton btnExcluir = new JButton("Excluir");
-		btnExcluir.addActionListener(new ActionListener() {
+		JButton btExcluir = new JButton("Excluir");
+		btExcluir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				excluiProduto();
 			}
 		});
-		pnRodape.add(btnExcluir);
+		
+		JButton btAlterar = new JButton("Alterar");
+		btAlterar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				alteraProduto();
+			}
+		});
+		pnRodape.add(btAlterar);
+		pnRodape.add(btExcluir);
 		
 		pnRodape.add(btGravar);
 	}
+	
+	private void alteraProduto() {
+		int linha = tabela.getSelectedRow();
+		// pega os valores da tabela
+		String codigo = tabela.getModel().getValueAt(linha,0).toString();
+		String nome = tabela.getModel().getValueAt(linha,1).toString();
+		String qtde = tabela.getModel().getValueAt(linha,2).toString();
+		String valor = tabela.getModel().getValueAt(linha,3).toString();
+		// preenche os textfields de cadastro
+		tfCodigo.setText(codigo);
+		tfNome.setText(nome);
+		tfQtde.setText(qtde);
+		tfValor.setText(valor);
+		tpProduto.setSelectedIndex(0);
+		tfNome.requestFocus();
+	}	
 	
 	private void gravaProduto() {
 		int codigo = Conversao.str2int(tfCodigo.getText());

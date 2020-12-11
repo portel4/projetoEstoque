@@ -91,6 +91,11 @@ public class TelaPrincipal extends JFrame {
 		pnCentral.add(lbCadastroDeFornecedores);
 		
 		JButton btKardex = new JButton("");
+		btKardex.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				telaKardex();
+			}
+		});
 		btKardex.setContentAreaFilled(false);
 		btKardex.setBorderPainted(false);
 		sl_pnCentral.putConstraint(SpringLayout.NORTH, btKardex, 62, SpringLayout.SOUTH, lbCadastroDeProdutos);
@@ -102,6 +107,10 @@ public class TelaPrincipal extends JFrame {
 		sl_pnCentral.putConstraint(SpringLayout.NORTH, lbMovimentaoDeEstoque, 6, SpringLayout.SOUTH, btKardex);
 		sl_pnCentral.putConstraint(SpringLayout.EAST, lbMovimentaoDeEstoque, 0, SpringLayout.EAST, btProduto);
 		pnCentral.add(lbMovimentaoDeEstoque);
+	}
+	
+	private void telaKardex() {
+		new TelaKardex().setVisible(true);
 	}
 	
 	private void telaProduto() {

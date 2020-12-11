@@ -9,7 +9,7 @@ import dao.FornecedorDAO;
 import model.Entrada;
 import model.Fornecedor;
 import model.Produto;
-import view.TelaKardex;
+import view.TelaPrincipal;
 
 public class Principal {
 	
@@ -22,10 +22,16 @@ public class Principal {
 		//testeFornecedor();	
 		//testeConexao();
 		//testaEntrada();
-		//new TelaPrincipal().setVisible(true);
+		//listaEntradas();
+		new TelaPrincipal().setVisible(true);
 		//new TelaFornecedor().setVisible(true);
 		//new TelaProduto().setVisible(true);
-		new TelaKardex().setVisible(true);
+		//new TelaKardex().setVisible(true);
+		//new TelaEntrada().setVisible(true);
+	}
+	
+	private static void listaEntradas() {
+		Entrada.getLista(1).forEach(e -> System.out.println(e));
 	}
 	
 	private static void testaEntrada() {

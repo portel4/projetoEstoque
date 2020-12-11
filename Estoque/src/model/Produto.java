@@ -21,7 +21,13 @@ public class Produto {
 	}
 	
 	public int gravar() {
-		int codigo = new ProdutoDAO().insert(this);
+		int codigo = 0;
+		if (this.getCodigo() == 0) { // incluindo novo registro
+			codigo = new ProdutoDAO().insert(this);
+		} else { // alterando registro existente
+			new ProdutoDAO().update(this);
+			codigo = this.getCodigo();
+		}
 		return codigo;
 	}
 	

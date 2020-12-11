@@ -17,10 +17,10 @@ import model.Produto;
 import util.CSV;
 
 // DAO - Data Access Object
-public class ProdutoDAO implements DAO<Produto> {
+public class ProdutoDAO implements DAO<Produto>{
 	
-	private final String ARQUIVO = "C:/Users/Deliziane/Documents/Estudos/Java_curso/GitHub/projetoEstoque/Estoque/bd/Produto.CSV";
-	
+	private final String ARQUIVO = "D:/Projects/GitHub/JavaProgrammer/Estoque/db/Produto.CSV";
+
 	@Override
 	public List<Produto> select() {
 		List<Produto> lista = new ArrayList<>();
@@ -104,8 +104,30 @@ public class ProdutoDAO implements DAO<Produto> {
 
 	@Override
 	public boolean update(Produto r) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean ok = false;
+		Connection con = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		String sql = "UPDATE Produto SET " +
+					 "Nome = ?,  " +
+					 "Qtde = ?,  " +
+					 "Valor = ?  " +
+					 "WHERE Codigo = ?";
+		con = ConnectionFactory.getConnection();		
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setString(1,r.getNome());
+			pst.setInt(2,r.getQtde());
+			pst.setDouble(3,r.getValor());
+			pst.setInt(4,r.getCodigo());
+			pst.executeUpdate();
+			ok = true;
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			ConnectionFactory.closeConnection(con,pst,rs);
+		}
+		return ok;
 	}
 
 	@Override

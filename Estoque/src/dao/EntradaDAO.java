@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,11 +14,12 @@ import connection.ConnectionFactory;
 import model.Entrada;
 import model.Fornecedor;
 import model.Produto;
+import util.Conversao;
 
-public class EntradaDAO implements DAO{
-
+public class EntradaDAO implements DAO<Entrada>{
+	
 	@Override
-	public List select() {
+	public List<Entrada> select() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -39,7 +42,8 @@ public class EntradaDAO implements DAO{
 				Produto produto = new ProdutoDAO().select(codProduto);
 				int codFornecedor = rs.getInt("Fornecedor");
 				Fornecedor fornecedor = new FornecedorDAO().select(codFornecedor);
-				Date data = new Date(System.currentTimeMillis());//rs.getDate("Data");
+				String dtString = rs.getString("Data");
+				Date data = Conversao.str2dmy(dtString);
 				String doc = rs.getString("Doc");
 				int qtde = rs.getInt("Qtde");
 				double valor = rs.getDouble("Valor");
@@ -60,13 +64,38 @@ public class EntradaDAO implements DAO{
 	}
 	
 	@Override
-	public int insert(Object r) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int insert(Entrada r) {
+		Connection con = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		String sql = "INSERT INTO Entrada " +
+					 "(Produto,Fornecedor,Data,Doc,Qtde,Valor) " +
+					 "VALUES (?,?,?,?,?,?)";
+		int codigo = 0;
+		con = ConnectionFactory.getConnection();		
+		try {
+			pst = con.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
+			pst.setInt(1,r.getProduto().getCodigo());
+			pst.setInt(2,r.getFornecedor().getCodigo());
+			pst.setString(3,Conversao.date2dmy.format(r.getData()));
+			pst.setString(4, r.getDoc());
+			pst.setInt(5, r.getQtde());
+			pst.setDouble(6, r.getValor());
+			pst.executeUpdate();
+			rs = pst.getGeneratedKeys();
+			if (rs.next()) {
+				codigo = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			ConnectionFactory.closeConnection(con,pst,rs);
+		}
+		return codigo;
 	}
 
 	@Override
-	public boolean update(Object r) {
+	public boolean update(Entrada r) {
 		// TODO Auto-generated method stub
 		return false;
 	}

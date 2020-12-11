@@ -19,14 +19,16 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
 
+import model.Entrada;
 import model.Produto;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.ImageIcon;
 
 public class TelaKardex extends JFrame {
 
 	private JPanel contentPane;
-	private JTable table;
+	private JTable tabela;
 	private JComboBox cbProduto;
 	private Produto produto;
 	private List<Produto> produtos = new ArrayList<>();
@@ -74,28 +76,35 @@ public class TelaKardex extends JFrame {
 		JScrollPane pnTabela = new JScrollPane();
 		contentPane.add(pnTabela, BorderLayout.CENTER);
 		
-		table = new JTable();
-		table.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-			},
-			new String[] {
-				"New column", "New column", "New column", "New column", "New column"
-			}
-		));
-		pnTabela.setViewportView(table);
+		tabela = new JTable();
+		atualizaTabela(0);
+		pnTabela.setViewportView(tabela);
 		
 		JPanel pnRodape = new JPanel();
 		pnRodape.setBackground(Color.LIGHT_GRAY);
 		pnRodape.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		contentPane.add(pnRodape, BorderLayout.SOUTH);
 		
-		JButton btnNewButton = new JButton("New button");
-		pnRodape.add(btnNewButton);
+		JButton btEntrada = new JButton("Entrada");
+		btEntrada.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				telaEntrada();
+			}
+		});
+		btEntrada.setIconTextGap(8);
+		btEntrada.setIcon(new ImageIcon(TelaKardex.class.getResource("/images/btAdiciona.png")));
+		pnRodape.add(btEntrada);
+		
+		JButton btnSaida = new JButton("Saida");
+		btnSaida.setIconTextGap(8);
+		btnSaida.setIcon(new ImageIcon(TelaKardex.class.getResource("/images/btAdiciona.png")));
+		pnRodape.add(btnSaida);
+	}
+	
+	
+	// chama a tela de Entrada
+	private void telaEntrada() {
+		new TelaEntrada().setVisible(true);
 	}
 	
 	// Preencher o Combobox de Produtos
@@ -111,11 +120,17 @@ public class TelaKardex extends JFrame {
 		int item = cbProduto.getSelectedIndex();
 		if (item >= 0) {
 			produto = produtos.get(item);
+			atualizaTabela(produto.getCodigo());
 			//System.out.println("Item Selecionado: " + item +
 			//				   "\tProduto: " + produto.getNome());
 		} else {
 			produto = null;
+			atualizaTabela(0);
 		}
+	}
+	
+	private void atualizaTabela(int produto) {
+		tabela.setModel(Entrada.getTableModel(produto));
 	}
 
 }
