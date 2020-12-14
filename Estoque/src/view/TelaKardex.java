@@ -4,26 +4,28 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
-import javax.swing.table.DefaultTableModel;
 
 import model.Entrada;
+import model.Kardex;
 import model.Produto;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.ImageIcon;
+import util.Conversao;
 
 public class TelaKardex extends JFrame {
 
@@ -95,12 +97,42 @@ public class TelaKardex extends JFrame {
 		btEntrada.setIcon(new ImageIcon(TelaKardex.class.getResource("/images/btAdiciona.png")));
 		pnRodape.add(btEntrada);
 		
-		JButton btnSaida = new JButton("Saida");
-		btnSaida.setIconTextGap(8);
-		btnSaida.setIcon(new ImageIcon(TelaKardex.class.getResource("/images/btAdiciona.png")));
-		pnRodape.add(btnSaida);
+		JButton btSaida = new JButton("Saida");
+		btSaida.setIconTextGap(8);
+		btSaida.setIcon(new ImageIcon(TelaKardex.class.getResource("/images/btAdiciona.png")));
+		pnRodape.add(btSaida);
+		
+		JButton btAlterar = new JButton("Alterar");
+		btAlterar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				alteraKardex();
+			}
+		});
+		btAlterar.setIconTextGap(8);
+		btAlterar.setIcon(new ImageIcon(TelaKardex.class.getResource("/images/btAltera.png")));
+		pnRodape.add(btAlterar);
+		
+		JButton btExcluir = new JButton("Excluir");
+		btExcluir.setIconTextGap(8);
+		btExcluir.setIcon(new ImageIcon(TelaKardex.class.getResource("/images/btExclui.png")));
+		pnRodape.add(btExcluir);
 	}
 	
+	private void alteraKardex() {
+		int linha = tabela.getSelectedRow();
+		String tipo = tabela.getModel().getValueAt(linha,0).toString();		
+		int codigo = Conversao.str2int(
+					tabela.getModel().getValueAt(linha,1).toString());
+		if (tipo.equals("E")) {  // é uma entrada
+			Entrada e = Entrada.pesquisar(codigo);
+			if (e == null) {
+				JOptionPane.showMessageDialog(null, 
+						"Registro de Entrada não localizado!");
+			} else {
+				new TelaEntrada(e).setVisible(true);
+			}
+		}
+	}
 	
 	// chama a tela de Entrada
 	private void telaEntrada() {
@@ -130,7 +162,7 @@ public class TelaKardex extends JFrame {
 	}
 	
 	private void atualizaTabela(int produto) {
-		tabela.setModel(Entrada.getTableModel(produto));
+		tabela.setModel(Kardex.getTableModel(produto));
 	}
 
 }

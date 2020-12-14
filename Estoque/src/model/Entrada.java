@@ -34,6 +34,11 @@ public class Entrada extends Kardex {
 		return codigo;
 	}	
 	
+	public static Entrada pesquisar(int codigo) {
+		Entrada e = new EntradaDAO().select(codigo);
+		return e;
+	}
+	
 	public static List<Entrada> getLista(int produto) {
 		return (new EntradaDAO().selectByProduto(produto));
 	}
@@ -66,14 +71,14 @@ public class Entrada extends Kardex {
 		return modelo;
 	}
 	
-	@Override
-	public String toString() {
-		return ("----------------------------------------------------\n" +
-				getCodigo() + ": " + 
-				getProduto().getNome() + " - " +
-				getFornecedor().getNome() + "\n" +
-				getData() + " - " + getDoc() + " - " + 
-				getQtde() + " - " + getValor());
-	}
+//	@Override
+//	public String toString() {
+//		return ("----------------------------------------------------\n" +
+//				getCodigo() + ": " + 
+//				getProduto().getNome() + " - " +
+//				getFornecedor().getNome() + "\n" +
+//				getData() + " - " + getDoc() + " - " + 
+//				getQtde() + " - " + getValor());
+//	}
 
 }

@@ -5,11 +5,16 @@ import java.util.Date;
 import java.util.List;
 
 import connection.ConnectionFactory;
+import dao.ClienteDAO;
 import dao.FornecedorDAO;
+import dao.ProdutoDAO;
+import model.Cliente;
 import model.Entrada;
 import model.Fornecedor;
+import model.Kardex;
 import model.Produto;
-import view.TelaPrincipal;
+import model.Saida;
+import view.TelaKardex;
 
 public class Principal {
 	
@@ -23,11 +28,29 @@ public class Principal {
 		//testeConexao();
 		//testaEntrada();
 		//listaEntradas();
-		new TelaPrincipal().setVisible(true);
+		//new TelaPrincipal().setVisible(true);
 		//new TelaFornecedor().setVisible(true);
 		//new TelaProduto().setVisible(true);
-		//new TelaKardex().setVisible(true);
+		new TelaKardex().setVisible(true);
 		//new TelaEntrada().setVisible(true);
+		//testaKardex();
+		//testaOrdem();
+	}
+	
+	private static void testaOrdem() {
+		for (Kardex k: Kardex.getListaKardex(1)) {
+			System.out.println(k);
+		}
+	}
+	
+	private static void testaKardex() {
+		Produto p = new ProdutoDAO().select(1);
+		Cliente c = new ClienteDAO().select(1);
+		Date d = new Date();
+		Kardex k = new Saida(0,p,c,d,"nf 111",3,200.0);
+		Saida s = (Saida) k;
+		System.out.println(s.getCliente());
+		
 	}
 	
 	private static void listaEntradas() {

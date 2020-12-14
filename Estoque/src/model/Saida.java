@@ -2,6 +2,11 @@ package model;
 
 import java.util.Date;
 
+import javax.swing.table.DefaultTableModel;
+
+import dao.SaidaDAO;
+import util.Conversao;
+
 public class Saida extends Kardex {
 
 	private Cliente cliente;
@@ -19,5 +24,24 @@ public class Saida extends Kardex {
 		this.cliente = cliente;
 	}	
 
+	public static DefaultTableModel getTableModel(int produto) {
+		DefaultTableModel modelo = new DefaultTableModel();
+		modelo.addColumn("Código");
+		modelo.addColumn("Cliente");
+		modelo.addColumn("Data");
+		modelo.addColumn("Docto");
+		modelo.addColumn("Qtde");
+		modelo.addColumn("Valor");
+		for (Saida e: new SaidaDAO().selectByProduto(produto)) {
+			String[] s = { String.valueOf(e.getCodigo()), 
+										  e.getCliente().getNome(), 
+						   Conversao.date2dmy.format(e.getData()), 
+										  e.getDoc(), 
+						   String.valueOf(e.getQtde()), 
+						   String.valueOf(e.getValor()) };
+			modelo.addRow(s);
+		}
+		return modelo;
+	}	
 	
 }

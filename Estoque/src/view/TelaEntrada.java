@@ -38,11 +38,16 @@ public class TelaEntrada extends JFrame {
 	private JComboBox cbFornecedor;
 	private List<Produto> produtos = new ArrayList<>();
 	private List<Fornecedor> fornecedores = new ArrayList<>();
+	private Entrada e = null;
 
 	/**
 	 * Create the frame.
 	 */
 	public TelaEntrada() {
+		this(null);
+	}
+	public TelaEntrada(Entrada e) {
+		this.e = e;
 		initComponents();
 		setTitle("Sistema de Controle de Estoque");
 		setLocationRelativeTo(null);
@@ -120,6 +125,13 @@ public class TelaEntrada extends JFrame {
 		sl_pnCentral.putConstraint(SpringLayout.EAST, lbData, 0, SpringLayout.EAST, lbProduto);
 		pnCentral.add(lbData);
 		
+		tfData = new JTextField();
+		tfData.setText("Data");
+		sl_pnCentral.putConstraint(SpringLayout.NORTH, tfData, 20, SpringLayout.SOUTH, cbFornecedor);
+		sl_pnCentral.putConstraint(SpringLayout.WEST, tfData, 20, SpringLayout.EAST, lbData);
+		sl_pnCentral.putConstraint(SpringLayout.EAST, tfData, 135, SpringLayout.EAST, lbData);
+		pnCentral.add(tfData);
+		tfData.setColumns(10);		
 		JLabel lbDocto = new JLabel("Docto:");
 		sl_pnCentral.putConstraint(SpringLayout.EAST, lbDocto, 0, SpringLayout.EAST, lbProduto);
 		pnCentral.add(lbDocto);
@@ -155,14 +167,7 @@ public class TelaEntrada extends JFrame {
 		sl_pnCentral.putConstraint(SpringLayout.WEST, tfValor, 0, SpringLayout.WEST, cbProduto);
 		pnCentral.add(tfValor);
 		tfValor.setColumns(10);
-		
-		tfData = new JTextField();
-		tfData.setText("Data");
-		sl_pnCentral.putConstraint(SpringLayout.NORTH, tfData, 20, SpringLayout.SOUTH, cbFornecedor);
-		sl_pnCentral.putConstraint(SpringLayout.WEST, tfData, 20, SpringLayout.EAST, lbData);
-		sl_pnCentral.putConstraint(SpringLayout.EAST, tfData, 135, SpringLayout.EAST, lbData);
-		pnCentral.add(tfData);
-		tfData.setColumns(10);
+
 	}
 	
 	private void gravaEntrada() {
@@ -176,14 +181,30 @@ public class TelaEntrada extends JFrame {
 		String doc = tfDoc.getText();
 		int qtde = Conversao.str2int(tfQtde.getText());
 		double valor = Conversao.str2double(tfValor.getText());
-		new Entrada(p,f,data,doc,qtde,valor).gravar();
-		limpaTela();
+		if (e == null) { // inclusão de nova entrada
+			new Entrada(p,f,data,doc,qtde,valor).gravar();
+			limpaTela();
+		} else {  // alteração da entrada
+			new Entrada(e.getCodigo(),p,f,data,doc,qtde,valor).gravar();
+			this.dispose();
+		}	
 	}
 	
 	private void configuraTela() {
 		carregaProdutos();
 		carregaFornecedores();
-		limpaTela();
+		if (e == null) { // inclusão 
+			limpaTela();
+		} else {   // alteracao
+			//int idxProduto = produtos.indexOf(e.getProduto());
+			cbProduto.setSelectedItem(e.getProduto().getNome());
+			cbFornecedor.setSelectedItem(e.getFornecedor().getNome());
+			tfData.setText(Conversao.date2dmy.format(e.getData()));
+			tfDoc.setText(e.getDoc());
+			tfQtde.setText(String.valueOf(e.getQtde()));
+			tfValor.setText(String.valueOf(e.getValor()));
+		}
+		
 	}
 	
 	private void carregaProdutos() {
@@ -207,6 +228,4 @@ public class TelaEntrada extends JFrame {
 		tfValor.setText("");
 		cbProduto.requestFocus();
 	}
-	
-	
 }
